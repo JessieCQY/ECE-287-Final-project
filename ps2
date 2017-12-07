@@ -1,0 +1,153 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_unsigned.all;
+
+entity ps2 is
+port(clk : in std_logic;
+	  kb_clk : in std_logic;
+	  kb_data : in std_logic;	
+	  key_signal : out std_logic
+	  ps2_data: out std_logic_vector(7 downto 0)
+	  );
+end ps2;
+
+architecture behave of ps2 is
+	signal kb_clk_fall : std_logic;
+	signal h2l_1:std_logic;
+	signal h2l_2:std_logic;
+	
+signal cnt:integer range 0 to 30:=0;	
+	signal ps2_data_temp:std_logic_vector(7 downto 0);
+begin
+process(clk)
+begin
+	if clk'event and clk = '1' then
+		h2l_1<=kb_clk;
+		h2l_2<=h2l_1;
+	end if;
+end process;
+	kb_clk_fall<=h2l_2 and (not h2l_1);
+process(ps2_data_temp)	
+begin
+   case ps2_data_temp is
+	when X"70"=>
+	           ps2_data<=X"00";
+	when X"69"=>			  
+              ps2_data<=X"01";
+	when X"72"=>			  
+              ps2_data<=X"02";
+	when X"7A"=>			  
+              ps2_data<=X"03";	
+	when X"6B"=>			  
+              ps2_data<=X"04";		
+	when X"73"=>			  
+              ps2_data<=X"05";	
+	when X"74"=>			  
+              ps2_data<=X"06";	
+	when X"6C"=>			  
+              ps2_data<=X"07";	
+	when X"75"=>			  
+              ps2_data<=X"08";
+	when X"7D"=>			  
+              ps2_data<=X"09";	
+   when others=>
+              ps2_data<=X"00";	
+	end case;			  
+end process;
+	
+	
+process(clk)
+begin
+	if clk'event and clk = '1' then
+		case cnt is
+				when 0=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								key_signal<='0';
+								else
+								cnt<=0;
+								key_signal<='0';
+								end if;
+								
+				when 1=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								ps2_data_temp(cnt-1)<=kb_data;
+							 end if;
+				when 2=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								ps2_data_temp(cnt-1)<=kb_data;
+								end if;
+				when 3=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								ps2_data_temp(cnt-1)<=kb_data;
+								end if;
+				when 4=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								ps2_data_temp(cnt-1)<=kb_data;
+								end if;
+				when 5=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								ps2_data_temp(cnt-1)<=kb_data;
+								end if;
+				when 6=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								ps2_data_temp(cnt-1)<=kb_data;
+								end if;
+				when 7=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								ps2_data_temp(cnt-1)<=kb_data;
+								end if;
+				when 8=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								ps2_data_temp(cnt-1)<=kb_data;
+								end if;													
+				when 9=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								end if;	
+				when 10=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								end if;								
+				when 11=>if (X"F0"=ps2_data_temp) then  
+								 cnt<=12;
+                 else
+								 cnt<=23;
+								 end if;		
+				when 12=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								end if;
+				when 13=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								end if;
+				when 14=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								end if;
+				when 15=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								end if;
+				when 16=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								end if;
+				when 17=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								end if;
+				when 18=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								end if;
+				when 19=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								end if;
+				when 20=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								end if;
+				when 21=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								end if;
+				when 22=>if ('1'=kb_clk_fall) then 
+								cnt<=cnt+1;
+								end if;								
+				when 23=> cnt<=0; key_signal<='1';
+				when others=>cnt<=0;	 key_signal<='0';
+			end case;		
+	end if;
+end process;
+end behave;

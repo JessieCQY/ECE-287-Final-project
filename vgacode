@@ -1,0 +1,191 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+
+entity vgacode is
+port(    clk25M : in std_logic; 
+         rst:  in std_logic;
+			is_moving:in std_logic_vector(8 downto 0);
+	    
+		   vga_clk:out std_logic;
+			vag_blank_out: out std_logic;
+			hsync : out std_logic;
+			vsync : out std_logic;
+			rdata : out std_logic;
+			gdata : out std_logic;
+			bdata : out std_logic
+			);           
+end vgacode;
+
+architecture behave of vgacode is
+	-- horizontal timing signals
+	constant h_data: integer:=640;
+	constant h_front: integer:=16;
+	constant h_back: integer:=48;
+	constant h_sync: integer:=96;
+	constant h_period: integer:= h_sync + h_data + h_front + h_back;
+
+	-- vertical timing signals
+	constant v_data: integer:=480;
+	constant v_front: integer:=11;
+	constant v_back: integer:=32;
+	constant v_sync: integer:=2;
+	constant v_period: integer:= v_sync + v_data + v_front + v_back;
+
+constant cube_x_start:integer:=300;
+constant cube_y_start:integer:=180;
+constant cube_x_end:integer:=390;
+constant cube_y_end:integer:=270;
+
+
+constant cube_size:integer:=30;
+constant cube_border:integer:=1;
+constant choose_cube_border:integer:=3;
+	
+	signal henable, venable : std_logic;
+	signal hcnt: std_logic_vector(9 downto 0);							
+	signal vcnt: std_logic_vector(9 downto 0);							
+	signal color: std_logic_vector(2 downto 0);
+	
+	begin
+
+process(clk25M,rst)
+begin	
+	if rst='0' then
+		hcnt <= (others => '0');
+	else if (clk25M'event and clk25M = '1') then
+		if hcnt < h_period then
+			hcnt <= hcnt + 1;
+		else
+			hcnt <= (others => '0');
+		end if;
+	end if;
+	end if;
+end process;
+
+process(clk25M)
+begin
+	if (clk25M'event and clk25M = '1') then
+		if (hcnt >= (h_data + h_front) 
+			and hcnt < (h_data + h_sync + h_front))  then
+			hsync <= '0';
+		else 
+			hsync <= '1';
+		end if;		
+	end if;
+end process;
+
+
+process(clk25M,rst)
+begin
+	if rst='0' then
+		vcnt <= (others => '0');
+		
+		else if (clk25M'event and clk25M = '1') then
+		if hcnt = (h_data + h_sync + h_front) then
+			if vcnt < v_period then
+				vcnt <= vcnt + 1;
+			else
+				vcnt <= (others => '0');
+			end if;
+		end if;
+	end if;
+	end if;
+end process;
+
+process(clk25M)
+begin
+	if (clk25M'event and clk25M = '1') then
+		if (vcnt >= (v_data + v_front) 
+			and vcnt < (v_data + v_sync + v_front)) then
+			vsync <= '0';
+		else 
+			vsync <= '1';
+		end if;
+	end if;
+end process;
+
+process(clk25M)
+begin
+	if (clk25M'event and clk25M = '1') then
+		if hcnt < h_data then
+			henable <= '1';
+		else
+			henable <= '0';
+		end if;
+	end if;
+end process;
+
+process(clk25M)
+begin
+	if (clk25M'event and clk25M = '1') then
+		if vcnt < v_data then
+			venable <= '1';
+		else
+			venable <= '0';
+		end if;
+	end if;
+end process;
+
+vga_clk<=clk25M;
+
+vag_blank_out<='1' when ((hcnt>=h_back+h_sync) and (hcnt<h_back+h_sync+h_data) and (vcnt>=v_back+v_sync) and (vcnt<v_back+v_sync+v_data)) else '0';
+
+playing:process(rst,clk25M)
+	variable playing_num_0:integer range 0 to 10:=0;
+   variable cow_0:integer range 0 to 10:=0;
+	variable cube_x_temp_0:integer:=0;	
+	variable cube_y_temp_0:integer:=0;
+	begin
+			if rst='0' then
+					cow_0:=0;
+					playing_num_0:=0;	
+					rdata <= '0';
+					gdata <=  '0';
+					bdata <= '0';	
+					cube_x_temp_0:=cube_x_start;
+					cube_y_temp_0:=cube_y_start;			
+			elsif clk25M'event and clk25M='1' then	
+					if ((hcnt>=cube_x_start and vcnt>=cube_y_start)and(cube_x_end>=hcnt and cube_y_end>=vcnt)) then			
+							if vcnt>cube_y_temp_0 and vcnt<cube_y_temp_0+cube_size and hcnt=cube_x_start then
+									case cow_0 is
+											when 0=> playing_num_0:=0;
+											when 1=> playing_num_0:=3;
+											when 2=> playing_num_0:=6;
+											when others=> playing_num_0:=0;
+									end case;
+										
+							elsif (hcnt=cube_x_temp_0+cube_size) then	
+								playing_num_0:=playing_num_0+1;
+										
+							end if;
+							if (cube_x_temp_0>=cube_x_end) then
+										cube_x_temp_0:=cube_x_start;
+							elsif hcnt=cube_x_temp_0+cube_size then
+							     cube_x_temp_0:=cube_x_temp_0+cube_size;								  
+							end if;	
+							if (cube_y_temp_0>=cube_y_end) then
+										cube_y_temp_0:=cube_y_start;
+										cow_0:=0;
+							elsif vcnt=cube_y_temp_0+cube_size then
+									 cow_0:=cow_0+1;
+							     cube_y_temp_0:=cube_y_temp_0+cube_size;								  
+							end if;								
+							if (vcnt>cube_y_temp_0)and((cube_y_temp_0+cube_size-cube_border)>vcnt)and(hcnt>cube_x_temp_0)and((cube_x_temp_0+cube_size-cube_border)>hcnt) then												
+											rdata <=(is_moving(playing_num_0));
+											gdata <=(is_moving(playing_num_0));
+											bdata <= '0';						
+							else						
+											rdata <= '1';
+											gdata <= '1';
+											bdata <= '1';	
+							end if;	
+					else
+							rdata <= '0';
+							gdata <= '0';
+							bdata <= '0';					
+					end if;						
+							
+			end if;												
+	end process playing;	
+end behave;

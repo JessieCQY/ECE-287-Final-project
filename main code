@@ -1,0 +1,78 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_arith.all;
+use ieee.std_logic_unsigned.all;
+entity vga_block_design is
+                 port(
+						clk50M : in std_logic; 
+						rst:  in std_logic;
+
+						kb_clk : in std_logic;
+						kb_data : in std_logic;						 
+						vga_clk:out std_logic;
+						vag_blank_out: out std_logic;
+						hsync : out std_logic;
+						vsync : out std_logic;
+						rdata : out std_logic;
+						gdata : out std_logic;
+						bdata : out std_logic;
+						vga_sync:out std_logic;
+                  game_score_high:out std_logic_vector(6 downto 0);						
+					   game_score_low:out std_logic_vector(6 downto 0)
+					  
+					      );
+end 	vga_block_design;
+architecture behave of 	vga_block_design is
+signal clk25M:std_logic;
+signal key_signal:std_logic;
+signal ps2_data:std_logic_vector(7 downto 0);
+signal is_moving:std_logic_vector(8 downto 0);
+signal game_score:std_logic_vector(7 downto 0);
+begin
+
+vga_sync<='0';
+	Inst0_clk_div: entity work.clk_div PORT MAP(
+		clk =>clk50M,
+		clk25M =>clk25M 
+	);
+
+	Inst1_ps2:entity work.ps2 PORT MAP(
+		clk =>clk25M ,
+		kb_clk =>kb_clk ,
+		kb_data =>kb_data,
+		key_signal =>key_signal, 
+		ps2_data=>ps2_data
+	);
+
+	Inst2_vgacode:entity work.vgacode PORT MAP(
+		clk25M => clk25M,
+		rst => rst,
+		is_moving =>is_moving ,
+		vga_clk	 =>vga_clk,
+		vag_blank_out=>vag_blank_out,
+		hsync => hsync,
+		vsync => vsync,
+		rdata => rdata,
+		gdata => gdata,
+		bdata => bdata
+	);
+	Inst3_seg_decode: entity work.seg_decode PORT MAP(
+		iDIG =>game_score(7 downto 4),
+		oHEX_D =>game_score_high 
+	);
+	
+	  Inst4_seg_decode: entity work.seg_decode PORT MAP(
+		iDIG =>game_score(3 downto 0),
+		oHEX_D =>game_score_low 
+	);
+	
+	
+		Inst5_VGA_game_control:entity work.VGA_game_control PORT MAP(
+		clk_25m =>clk25M ,
+		rst_n =>rst ,
+		key_signal => key_signal,
+		ps2_data => ps2_data,
+		is_moving =>is_moving ,
+		game_score =>game_score 
+	);
+end behave;					

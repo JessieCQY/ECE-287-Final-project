@@ -1,0 +1,44 @@
+Library ieee; 
+Use ieee.std_logic_1164.all; 
+Use ieee.std_logic_arith.all; 
+Use ieee.std_logic_unsigned.all; 
+
+Entity division is 
+Port(
+		CLK1:in std_logic;          
+		TONE1:in integer range 0 to 2047;         
+		SPKS:out std_logic);          
+End division; 
+
+Architecture BEHAVIORAL of division is 
+Signal PRECLK,FULLSPKS:std_logic; 
+begin 
+P1:process(CLK1)          
+variable COUNT:integer range 0 to 16; 
+begin 
+     if CLK1'event and CLK1='1' then COUNT:=COUNT+1; 
+		if COUNT=8 then PRECLK<='1'; 
+		elsif COUNT=16 then PRECLK<='0';COUNT:=0; 
+		end if;       
+	  end if; 
+end process P1;
+
+P2:process(PRECLK,TONE1)        
+variable COUNT1:integer range 0 to 2047; 
+begin 
+     if PRECLK'event and PRECLK='1'then 
+          if COUNT1<TONE1 then COUNT1:=COUNT1+1;FULLSPKS<='0';           
+			 else COUNT1:=0;FULLSPKS<='1';           
+			 end if;      
+		end if; 
+end process P2; 
+P3:process(FULLSPKS)          
+variable COUNT2:std_logic:='0'; 
+begin 
+		if FULLSPKS'event and FULLSPKS='1' then COUNT2:=NOT COUNT2;           
+			if count2='1' then SPKS<='1';           
+			else SPKS<='0';           
+			end if;       
+		end if; 
+end process P3; 
+end BEHAVIORAL;

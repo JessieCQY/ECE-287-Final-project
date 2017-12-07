@@ -32,6 +32,7 @@ architecture behave of vgacode is
 	constant v_sync: integer:=2;
 	constant v_period: integer:= v_sync + v_data + v_front + v_back;
 
+
 constant cube_x_start:integer:=300;
 constant cube_y_start:integer:=180;
 constant cube_x_end:integer:=390;
@@ -43,8 +44,8 @@ constant cube_border:integer:=1;
 constant choose_cube_border:integer:=3;
 	
 	signal henable, venable : std_logic;
-	signal hcnt: std_logic_vector(9 downto 0);							
-	signal vcnt: std_logic_vector(9 downto 0);							
+	signal hcnt: std_logic_vector(9 downto 0);		-- horizontal pixel counter
+	signal vcnt: std_logic_vector(9 downto 0);		-- vertical line counter
 	signal color: std_logic_vector(2 downto 0);
 	
 	begin
@@ -146,7 +147,7 @@ playing:process(rst,clk25M)
 					cube_x_temp_0:=cube_x_start;
 					cube_y_temp_0:=cube_y_start;			
 			elsif clk25M'event and clk25M='1' then	
-					if ((hcnt>=cube_x_start and vcnt>=cube_y_start)and(cube_x_end>=hcnt and cube_y_end>=vcnt)) then			
+					if ((hcnt>=cube_x_start and vcnt>=cube_y_start)and(cube_x_end>=hcnt and cube_y_end>=vcnt)) then				
 							if vcnt>cube_y_temp_0 and vcnt<cube_y_temp_0+cube_size and hcnt=cube_x_start then
 									case cow_0 is
 											when 0=> playing_num_0:=0;
@@ -162,7 +163,7 @@ playing:process(rst,clk25M)
 							if (cube_x_temp_0>=cube_x_end) then
 										cube_x_temp_0:=cube_x_start;
 							elsif hcnt=cube_x_temp_0+cube_size then
-							     cube_x_temp_0:=cube_x_temp_0+cube_size;								  
+							     cube_x_temp_0:=cube_x_temp_0+cube_size;							  
 							end if;	
 							if (cube_y_temp_0>=cube_y_end) then
 										cube_y_temp_0:=cube_y_start;
@@ -187,5 +188,7 @@ playing:process(rst,clk25M)
 					end if;						
 							
 			end if;												
-	end process playing;	
+	end process playing;
+
+	
 end behave;

@@ -57,7 +57,7 @@ begin
 end process;
 	
 	
-process(clk)
+process(clk)--------------------------------------This part of process was refer to the Internet.
 begin
 	if clk'event and clk = '1' then
 		case cnt is

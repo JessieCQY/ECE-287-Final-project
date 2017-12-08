@@ -21,7 +21,7 @@ End division;
 begin
 process(INDEX) 
 begin      
-case INDEX is 
+case INDEX is --------------------------------------------------------The frequency is refer to the Internet.
 when"0000000000000001"=>TONE0<=1433;TUNE_SIG<= "0000110";HIGH<='0';
 when"0000000000000010"=>TONE0<=1277;TUNE_SIG<= "1011011";HIGH<='0'; 
 when"0000000000000100"=>TONE0<=1138;TUNE_SIG<= "1001111";HIGH<='0'; 

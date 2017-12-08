@@ -70,7 +70,7 @@ end process score_ctrl;
 
 
 
-body_cnt_ctrl:process(clk_25m,rst_n)        ------------------this process is come from the Internet
+body_cnt_ctrl:process(clk_25m,rst_n)        ------------------this process is refer to the Internet
 begin
     if rst_n ='0' then
 	    body_cnt<=0;
@@ -83,7 +83,7 @@ begin
 	end if;	
 end process body_cnt_ctrl;
 
-process(clk_25m,rst_n)            ---------------------this process is com from the Internet
+process(clk_25m,rst_n)            ---------------------this process is refer to the Internet
 begin
     if rst_n='0' then
 	    fresh_time_cnt<=0;
@@ -173,7 +173,7 @@ end process;
 
 
 
-process(clk_25m,rst_n)                 ---------------------this process is come from the Internet
+process(clk_25m,rst_n)                 ---------------------this process is refer to the Internet
 begin
    if rst_n='0' then
 	   body_set1<=0;

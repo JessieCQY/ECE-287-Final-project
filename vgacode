@@ -50,7 +50,7 @@ constant choose_cube_border:integer:=3;
 	
 	begin
 
-process(clk25M,rst)
+process(clk25M,rst)--------------------------------------The process under is come from the VGA Controller.
 begin	
 	if rst='0' then
 		hcnt <= (others => '0');
@@ -93,7 +93,7 @@ begin
 	end if;
 	end if;
 end process;
-
+----------------------------------------------------------------------------------------------------------------------------
 process(clk25M)
 begin
 	if (clk25M'event and clk25M = '1') then

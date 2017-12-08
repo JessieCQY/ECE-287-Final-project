@@ -140,7 +140,7 @@ playing:process(rst,clk25M)
 	begin
 			if rst='0' then
 					cow_0:=0;
-					playing_num_0:=0;	
+				        playing_num_0:=0;	
 					rdata <= '0';
 					gdata <=  '0';
 					bdata <= '0';	

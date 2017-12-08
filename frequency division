@@ -23,7 +23,7 @@ begin
 	  end if; 
 end process P1;
 
-P2:process(PRECLK,TONE1)        
+P2:process(PRECLK,TONE1) ---------------------------The process oultline is come from the Internet and then revised it.     
 variable COUNT1:integer range 0 to 2047; 
 begin 
      if PRECLK'event and PRECLK='1'then 

@@ -48,7 +48,6 @@ begin
 	end if;	
 end  process refresh_pro;
 
-
 score_ctrl:process(clk_25m,rst_n)
 begin
    if rst_n='0' then
@@ -71,7 +70,7 @@ end process score_ctrl;
 
 
 
-body_cnt_ctrl:process(clk_25m,rst_n)
+body_cnt_ctrl:process(clk_25m,rst_n)        ------------------this process is come from the Internet
 begin
     if rst_n ='0' then
 	    body_cnt<=0;
@@ -84,7 +83,7 @@ begin
 	end if;	
 end process body_cnt_ctrl;
 
-process(clk_25m,rst_n)
+process(clk_25m,rst_n)            ---------------------this process is com from the Internet
 begin
     if rst_n='0' then
 	    fresh_time_cnt<=0;
@@ -96,7 +95,6 @@ begin
 		end if;
 end if;		
 end process;
-
 
 process(clk_25m,rst_n)
 begin
@@ -160,7 +158,6 @@ begin
 	end if;  
 end process;
 
-
 process(clk_25m,rst_n)
 begin
    if rst_n='0' then
@@ -176,7 +173,7 @@ end process;
 
 
 
-process(clk_25m,rst_n)
+process(clk_25m,rst_n)                 ---------------------this process is come from the Internet
 begin
    if rst_n='0' then
 	   body_set1<=0;
